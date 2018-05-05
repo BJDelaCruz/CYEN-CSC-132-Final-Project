@@ -1,11 +1,39 @@
 Changes:
-added sfx and music
-added gameover screen
-added start screen(temporary unless sufficient)
-add items class (for use with many different images)
-added a visual animation (the key bobs up and down)
+-added sfx and music:
+ -music:
+  -intro
+  -background music
+  -game over music
+ 
+ -SFX:
+  -shooting bow
+  -arrow hitting
+  -3 random player damage
+  - pickup item
+
+-added gameover screen
+-added start screen(temporary unless sufficient)
+-add items class (for use with many different images)
+-added a visual animation (the key bobs up and down)
 
 Library download codes:
 pip install pygame
 pip install pytmx
 pip install pytweening
+
+Notes:
+-If Brencen gets his start screen working the way he wants we'll replace the current one
+-I may have figured out the change player image problem, I'll code and test it later today 5/5/2018
+
+Current problems:
+-changing images
+-snap player dirrection(press up look up)
+-player collision with walls(teleports player to the clossest corner
+
+To Do:
+-create switch class
+-create door class
+-create moving platform class
+-create maps
+-edit mob class to patrol a given route
+-****setup GPIO to work with pygame****
