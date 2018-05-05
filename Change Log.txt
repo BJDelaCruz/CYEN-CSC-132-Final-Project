@@ -1,0 +1,11 @@
+Changes:
+added sfx and music
+added gameover screen
+added start screen(temporary unless sufficient)
+add items class (for use with many different images)
+added a visual animation (the key bobs up and down)
+
+Library download codes:
+pip install pygame
+pip install pytmx
+pip install pytweening

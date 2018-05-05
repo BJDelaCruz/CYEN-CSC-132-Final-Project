@@ -2,6 +2,7 @@ import pygame as pg
 from random import uniform, choice, randint
 from settings import *
 from tilemap import collide_hit_rect
+import pytweening as tween
 vec = pg.math.Vector2
 
 def collide_with_walls(sprite, group, dir):
@@ -59,6 +60,7 @@ class Player(pg.sprite.Sprite):
                 dir = vec(1, 0).rotate(-self.rot)
                 pos = self.pos + BOW_OFFSET.rotate(-self.rot)
                 Arrow(self.game, pos, dir)
+                self.game.arrow_sounds["shoot"].play()
                 #spawn effect where it needs to be
 
     def update(self):
@@ -80,32 +82,46 @@ class Mob(pg.sprite.Sprite):
         self.groups = game.all_sprites, game.mobs
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.mob_img
+        self.image = game.mob_img.copy()
         self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
         self.hit_rect = MOB_HIT_RECT.copy()
-        self.hit_rect.center = (x, y))
-        self.pos = vec(x, y) * TILESIZE
+        self.hit_rect.center = self.rect.center
+        self.pos = vec(x, y)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
         self.rect.center = self.pos
         self.rot = 0
         self.health = MOB_HEALTH
+        self.speed = choice(MOB_SPEEDS)
+        self.target = game.player
+
+    def avoid_mobs(self):
+        for mob in self.game.mobs:
+            if mob != self:
+                dist = self.pos - mob.pos
+                if 0 < dist.length() < AVOID_RADIUS:
+                    self.acc += dist.normalize()
 
     def update(self):
-        self.rot = (self.game.player.pos - self.pos).angle_to(vec(1, 0))
-        self.image = pg.transform.rotate(self.game.mob_img, self.rot)
-        self.rect = self.image.get_rect()
-        self.rect.center = self.pos
-        self.acc = vec(MOB_SPEED, 0).rotate(-self.rot)
-        self.acc += self.vel * -1
-        self.vel += self.acc * self.game.dt
-        self.pos += self.vel * self.game.dt + 0.5 * self.acc * self.game.dt ** 2
-        self.hit_rect.centerx = self.pos.x
-        collide_with_walls(self, self.game.walls, 'x')
-        self.hit_rect.centery = self.pos.y
-        collide_with_walls(self, self.game.walls, 'y')
-        self.rect.center = self.hit_rect.center
-        if (self.health <= 0):
+        target_dist = self.target.pos - self.pos
+        if target_dist.length_squared() < DETECT_RADIUS**2:
+            self.rot = target_dist.angle_to(vec(1, 0))
+            self.image = pg.transform.rotate(self.game.mob_img, self.rot)
+            self.rect.center = self.pos
+            self.acc = vec(1, 0).rotate(-self.rot)
+            self.avoid_mobs()
+            self.acc.scale_to_length(self.speed)
+            self.acc += self.vel * -1
+            self.vel += self.acc * self.game.dt
+            self.pos += self.vel * self.game.dt + 0.5 * self.acc * self.game.dt ** 2
+            self.hit_rect.centerx = self.pos.x
+            collide_with_walls(self, self.game.walls, 'x')
+            self.hit_rect.centery = self.pos.y
+            collide_with_walls(self, self.game.walls, 'y')
+            self.rect.center = self.hit_rect.center
+        if self.health <= 0:
+            choice(self.game.zombie_hit_sounds).play()
             self.kill()
 
     def draw_health(self):
@@ -117,17 +133,16 @@ class Mob(pg.sprite.Sprite):
             col = RED
         width = int(self.rect.width * self.health / MOB_HEALTH)
         self.health_bar = pg.Rect(0, 0, width, 7)
-        if (self.health < MOB_HEALTH):
+        if self.health < MOB_HEALTH:
             pg.draw.rect(self.image, col, self.health_bar)
-
 
 class Wall(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self._layer = WALL_LAYER
-        self.groups = game.walls
+        self.groups = game.all_sprites, game.walls
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.all_sprites, game.wall_img
+        self.image =  game.wall_img
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
@@ -135,8 +150,7 @@ class Wall(pg.sprite.Sprite):
         self.rect.y = y * TILESIZE
 
 class Obstacle(pg.sprite.Sprite):
-    def __init__(self, game, x, y, w, h):
-
+    def __init__(self, game, x, y, w, h, name):
         self.groups = game.walls
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -145,6 +159,7 @@ class Obstacle(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x
         self.rect.y = y
+        self.name = name
 
 class Arrow(pg.sprite.Sprite):
     def __init__(self, game, pos, dir):
@@ -165,8 +180,46 @@ class Arrow(pg.sprite.Sprite):
         self.rect.center = self.pos
         self.image = pg.transform.rotate(self.game.arrow_img, self.game.player.rot)
         if pg.sprite.spritecollideany(self, self.game.walls):
+            self.game.arrow_sounds["hit"].play()
             self.kill()
 
+class Item(pg.sprite.Sprite):
+    def __init__(self, game, pos, type):
+        self._layer = ITEMS_LAYER
+        self.groups = game.all_sprites, game.items
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = game.item_images[type]
+        self.rect = self.image.get_rect()
+        self.type = type
+        self.pos = pos
+        self.rect.center = pos
+        self.tween = tween.easeInOutSine
+        self.step = 0
+        self.dir = 1
+
+    def update(self):
+        #bobing motion
+        offset = BOB_RANGE *(self.tween(self.step / BOB_RANGE) - 0.5)
+        self.rect.centery = self.pos.y + offset * self.dir
+        self.step += BOB_SPEED
+        if (self.step > BOB_RANGE):
+            self.step = 0
+            self.dir *= -1
+
+class Door(pg.sprite.Sprite):
+    def __init__(self, game, x, y, w, h, name):
+        self._layer = WALL_LAYER
+        self.groups = game.all_sprites, game.walls
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = game.door_img
+        self.rect = pg.Rect(x, y, w, h)
+        self.x = x
+        self.y = y
+        self.rect.x = x
+        self.rect.y = y
+        self.name = name
 '''
 class Visual_effect(pg.sprite.Sprite):
     def __init__(self, game, pos):

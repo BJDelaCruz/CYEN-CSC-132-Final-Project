@@ -8,6 +8,7 @@
 import pygame as pg
 import sys
 from settings import *
+from random import choice, random
 from sprites import *
 from os import path
 from tilemap import *
@@ -40,27 +41,72 @@ class Game:
         self.clock = pg.time.Clock()
         self.load_data()
 
+    def draw_text(self, text, font_name, size, color, x, y, align = "nw"):#align is what corner of the rect you want at the given cords
+        font = pg.font.Font(font_name, size)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        if align == "nw":
+            text_rect.topleft = (x, y)
+        if align == "ne":
+            text_rect.topright = (x, y)
+        if align == "sw":
+            text_rect.bottomleft = (x, y)
+        if align == "se":
+            text_rect.bottomright = (x, y)
+        if align == "n":
+            text_rect.midtop = (x, y)
+        if align == "s":
+            text_rect.midbottom = (x, y)
+        if align == "e":
+            text_rect.midright = (x, y)
+        if align == "w":
+            text_rect.midleft = (x, y)
+        if align == "center":
+            text_rect.center = (x, y)
+        self.screen.blit(text_surface, text_rect)
+
     def load_data(self):
-        game_folder = path.dirname(__file__)
-        img_folder = path.join(game_folder, 'img')
-        map_folder = path.join(game_folder, 'maps')
-        self.map = TiledMap(path.join(map_folder, 'Map1Test.tmx'))
-        self.map_img = self.map.make_map()
-        self.map_rect = self.map_img.get_rect()
-        self.player_img = pg.image.load(path.join(img_folder, PLAYER_IMG)).convert_alpha()
+        self.game_folder = path.dirname(__file__)
+        self.img_folder = path.join(self.game_folder, 'img')
+        self.map_folder = path.join(self.game_folder, 'maps')
+        self.snd_folder = path.join(self.game_folder, 'snd')
+        self.music_folder = path.join(self.game_folder, 'music')
+        self.title_font = path.join(self.img_folder, "leadcoat.ttf")
+        self.dim_screen = pg.Surface(self.screen.get_size()).convert_alpha()
+        self.dim_screen.fill((0, 0, 0, 180))
+        self.inv = []
+        self.player_img = pg.image.load(path.join(self.img_folder, PLAYER_IMG)).convert_alpha()
         self.player_img = pg.transform.scale(self.player_img, (TILESIZE, TILESIZE))
-        self.mob_img = pg.image.load(path.join(img_folder, MOB_IMG)).convert_alpha()
+        self.mob_img = pg.image.load(path.join(self.img_folder, MOB_IMG)).convert_alpha()
         self.mob_img = pg.transform.scale(self.mob_img, (TILESIZE, TILESIZE))
-        self.wall_img = pg.image.load(path.join(img_folder, WALL_IMG)).convert_alpha()
-        self.wall_img = pg.transform.scale(self.wall_img, (TILESIZE, TILESIZE))
-        self.arrow_img = pg.image.load(path.join(img_folder, ARROW_IMG)).convert_alpha()
+        self.arrow_img = pg.image.load(path.join(self.img_folder, ARROW_IMG)).convert_alpha()
         self.arrow_img = pg.transform.scale(self.arrow_img, (TILESIZE, TILESIZE))
+        self.door_img = pg.image.load(path.join(self.img_folder, DOOR_IMG)).convert_alpha()
+        self.door_img = pg.transform.scale(self.door_img, (TILESIZE, TILESIZE))
+        self.item_images = {}
+        for item in ITEM_IMAGES:
+            self.item_images[item] = pg.image.load(path.join(self.img_folder, ITEM_IMAGES[item])).convert_alpha()
+            self.item_images[item] = pg.transform.scale(self.item_images[item], (TILESIZE, TILESIZE))
+        #change volume of the sound
+        # self.Xsounds = []
+        #for snd in XSOUNDS:
+        #    s = pg.mixer.Sound(path.join(self.snd_folder, snd))
+        #    s.set_volume(0.2)
+        #    self.Xsounds.append(s)
+        self.arrow_sounds = {}
+        for type in ARROW_SOUNDS:
+            self.arrow_sounds[type] = (pg.mixer.Sound(path.join(self.snd_folder, ARROW_SOUNDS[type])))
+        self.player_dmg = []
+        for snd in PLAYER_DMG:
+            self.player_dmg.append(pg.mixer.Sound(path.join(self.snd_folder, snd)))
+        self.pickup = pg.mixer.Sound(path.join(self.snd_folder, ITEM_PICKUP))
+
         # to create visual effects animations
         '''
 
         self.effect_name = []
         for img in VE:
-            self.effect_name.append(pg.image.load(path.join(img_folder, img).convert_alpha))
+            self.effect_name.append(pg.image.load(path.join(self.img_folder, img).convert_alpha))
         '''
     def new(self):
         #start new game, creates a sprite group variable and draws a map from a txt file
@@ -68,6 +114,13 @@ class Game:
         self.walls = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
         self.arrows = pg.sprite.Group()
+        self.items = pg.sprite.Group()
+        self.map = TiledMap(path.join(self.map_folder, 'Map1Test.tmx'))
+        self.map_img = self.map.make_map()
+        self.map_rect = self.map_img.get_rect()
+        pg.mixer.music.stop()
+        pg.mixer.music.load(path.join(self.music_folder, BG_MUSIC))
+
 #        for row, tiles in enumerate(self.map.data):
 #            for col, tile in enumerate(tiles):
 #                if (tile == "1"):
@@ -77,20 +130,30 @@ class Game:
 #                if (tile == "M"):
 #                    Mob(self, col, row)
         for tile_object in self.map.tmxdata.objects:
+            obj_center = vec(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
             if (tile_object.name == "player"):
-                self.player = Player(self, tile_object.x, tile_object.y)
+                self.player = Player(self, obj_center.x, obj_center.y)
+            if tile_object.name == 'mob':
+                Mob(self, obj_center.x, obj_center.y)
             if (tile_object.name == "wall"):
-                Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, tile_object.name)
+            if (tile_object.name == "key"):
+                Item(self, obj_center, tile_object.name)
+            if (tile_object.name == "door"):
+                Door(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, tile_object.name)
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
+        self.paused = False
 
     def run(self):
         #game loop
         self.playing = True
+        pg.mixer.music.play(loops = -1)
         while self.playing:
             self.dt = self.clock.tick(FPS) / 1000.0  # fix for Python 2.x
             self.events()
-            self.update()
+            if (not self.paused):
+                self.update()
             self.draw()
 
     def quit(self):
@@ -102,13 +165,26 @@ class Game:
         #game loop - update
         self.all_sprites.update()
         self.camera.update(self.player)
+        #player hits items
+        hits = pg.sprite.spritecollide(self.player, self.items, True)
+        for hit in hits:
+            self.pickup.play()
+            hit.kill()
+            self.inv.append(hit.type)
         # mobs hit player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
+            if random() < 0.7:
+                choice(self.player_dmg).play()
             self.player.health -= TRAP_DAMAGE
             hit.vel = vec(0, 0)
             if (self.player.health <= 0):
                 self.playing = False
+                pg.mixer.music.stop()
+                pg.mixer.music.load(path.join(self.music_folder, GO_MUSIC))
+                pg.mixer.music.play()
+
+
         if (hits):
             self.player.pos += vec(DMG_KNOCKBACK, 0).rotate(-hits[0].rot)
         #Arrows hit mob
@@ -116,6 +192,8 @@ class Game:
         for hit in hits:
             hit.health -= ARROW_DAMAGE
             hit.vel = vec(0, 0)
+
+
 
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
@@ -143,6 +221,9 @@ class Game:
         # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
         # HUD functions
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
+        if (self.paused):
+            self.screen.blit(self.dim_screen, (0, 0))
+            self.draw_text("Paused", self.title_font, 105, RED, WIDTH / 2, HEIGHT / 2, align="center")
         pg.display.flip()
 
     def events(self):
@@ -155,13 +236,40 @@ class Game:
                     self.quit()
                 if (event.key == pg.K_h):
                     self.draw_debug = not self.draw_debug
+                if (event.key == pg.K_p):
+                    self.paused = not self.paused
 
 
     def show_start_screen(self):
-        pass
+        pg.mixer.music.load(path.join(self.music_folder, INTRO_MUSIC))
+        pg.mixer.music.play(loops = -1)
+        self.screen.fill(BGCOLOR)
+        self.draw_text(TITLE, self.title_font, 48, RED, WIDTH / 2.5, HEIGHT / 4)
+        self.draw_text("Press right hand button to shoot, left hand buttons to move", self.title_font, 22, RED, WIDTH / 6, HEIGHT / 2)
+        self.draw_text("Press a key to play", self.title_font, 22, RED, WIDTH / 2.5, HEIGHT * 3 / 4)
+        pg.display.flip()
+        self.wait_for_key()
 
     def show_go_screen(self):
-        pass
+        self.screen.fill(BLACK)
+        self.draw_text("GAME OVER", self.title_font, 100, RED,
+                       WIDTH / 2, HEIGHT / 4, align="center")
+        self.draw_text("Press any key to return to start menu", self.title_font, 40, WHITE,
+                       WIDTH / 2, HEIGHT * 3 / 5, align="center")
+        pg.display.flip()
+        self.wait_for_key()
+
+    def wait_for_key(self):
+        pg.event.wait()
+        waiting = True
+        while waiting:
+            self.clock.tick(FPS)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.quit()
+                if event.type == pg.KEYUP:
+                    waiting = False
 
 
 ##################################################################################################
@@ -171,8 +279,9 @@ class Game:
 ##################################################################################################
 
 g = Game()
-g.show_start_screen()
+
 while (True):
+    g.show_start_screen()
     g.new()
     g.run()
     g.show_go_screen()
