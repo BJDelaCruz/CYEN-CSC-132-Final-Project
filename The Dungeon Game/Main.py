@@ -83,6 +83,7 @@ class Game:
         self.arrow_img = pg.transform.scale(self.arrow_img, (TILESIZE, TILESIZE))
         self.door_img = pg.image.load(path.join(self.img_folder, DOOR_IMG)).convert_alpha()
         self.door_img = pg.transform.scale(self.door_img, (TILESIZE, TILESIZE))
+        self.player_pct = 1
         self.item_images = {}
         for item in ITEM_IMAGES:
             self.item_images[item] = pg.image.load(path.join(self.img_folder, ITEM_IMAGES[item])).convert_alpha()
@@ -176,13 +177,14 @@ class Game:
         for hit in hits:
             if random() < 0.7:
                 choice(self.player_dmg).play()
+            self.player_pct -= .1
             self.player.health -= TRAP_DAMAGE
             hit.vel = vec(0, 0)
             if (self.player.health <= 0):
-                self.playing = False
                 pg.mixer.music.stop()
                 pg.mixer.music.load(path.join(self.music_folder, GO_MUSIC))
                 pg.mixer.music.play()
+                self.playing = False
 
 
         if (hits):
@@ -220,7 +222,7 @@ class Game:
 
         # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
         # HUD functions
-        draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
+        draw_player_health(self.screen, 10, 10, self.player_pct  )
         if (self.paused):
             self.screen.blit(self.dim_screen, (0, 0))
             self.draw_text("Paused", self.title_font, 105, RED, WIDTH / 2, HEIGHT / 2, align="center")

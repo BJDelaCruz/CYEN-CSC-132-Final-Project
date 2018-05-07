@@ -31,11 +31,10 @@ GRIDHEIGHT = HEIGHT / TILESIZE
 WALL_IMG = "tileGreen_39.png"
 
 #play settings
-PLAYER_SPEED = 250
+PLAYER_SPEED = 225
 PLAYER_ROT_SPEED = 250
 PLAYER_IMG = "Player.png"
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
-BOW_OFFSET = vec(30, 10)
 PLAYER_HEALTH = 100
 
 #weapon settings

@@ -10,18 +10,18 @@ def collide_with_walls(sprite, group, dir):
         hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
         if hits:
             if hits[0].rect.centerx > sprite.hit_rect.centerx:
-                sprite.pos.x = hits[0].rect.left - sprite.hit_rect.width / 2
+                sprite.pos.x = hits[0].rect.left - sprite.hit_rect.width / 1.99
             if hits[0].rect.centerx < sprite.hit_rect.centerx:
-                sprite.pos.x = hits[0].rect.right + sprite.hit_rect.width / 2
+                sprite.pos.x = hits[0].rect.right + sprite.hit_rect.width / 1.99
             sprite.vel.x = 0
             sprite.hit_rect.centerx = sprite.pos.x
     if dir == 'y':
         hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
         if hits:
             if hits[0].rect.centery > sprite.hit_rect.centery:
-                sprite.pos.y = hits[0].rect.top - sprite.hit_rect.height / 2
+                sprite.pos.y = hits[0].rect.top - sprite.hit_rect.height / 1.99
             if hits[0].rect.centery < sprite.hit_rect.centery:
-                sprite.pos.y = hits[0].rect.bottom + sprite.hit_rect.height / 2
+                sprite.pos.y = hits[0].rect.bottom + sprite.hit_rect.height / 1.99
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
@@ -40,26 +40,43 @@ class Player(pg.sprite.Sprite):
         self.rot = 0
         self.last_shot = 0
         self.health = PLAYER_HEALTH
+        self.last_key = "right"
+        self.arrow_dir = vec(0, 1)
+        self.arrow_pos = self.pos + vec(30, 0)
 
     def get_keys(self):
         self.rot_speed = 0
         self.vel = vec(0, 0)
         keys = pg.key.get_pressed()
         if (keys[pg.K_LEFT] or keys[pg.K_a]):
-            self.rot_speed = PLAYER_ROT_SPEED
+            self.vel = vec(-PLAYER_SPEED, 0)
+            self.last_key = "left"
         if (keys[pg.K_RIGHT] or keys[pg.K_d]):
-            self.rot_speed = -PLAYER_ROT_SPEED
+            self.vel = vec(PLAYER_SPEED, 0)
+            self.last_key = "right"
         if (keys[pg.K_UP] or keys[pg.K_w]):
-            self.vel = vec(PLAYER_SPEED, 0).rotate(-self.rot)
+            self.vel = vec(0, -PLAYER_SPEED)
+            self.last_key = "up"
         if (keys[pg.K_DOWN] or keys[pg.K_s]):
-            self.vel = vec(-PLAYER_SPEED / 2, 0).rotate(-self.rot)
+            self.vel = vec(0, PLAYER_SPEED)
+            self.last_key = "down"
+        if (self.last_key == "down"):
+            self.arrow_dir = vec(0, 1)
+            self.arrow_pos = self.pos + vec(0, 30)
+        elif ( self.last_key == "up"):
+            self.arrow_dir = vec(0, -1)
+            self.arrow_pos = self.pos + vec(0, -30)
+        elif ( self.last_key == "left"):
+            self.arrow_dir = vec(-1, 0)
+            self.arrow_pos = self.pos + vec(-30, 0)
+        elif ( self.last_key == "right"):
+            self.arrow_dir = vec(1, 0)
+            self.arrow_pos = self.pos + vec(30, 0)
         if (keys[pg.K_SPACE]):
             now = pg.time.get_ticks()
             if (now - self.last_shot > ARROW_RATE):
                 self.last_shot = now
-                dir = vec(1, 0).rotate(-self.rot)
-                pos = self.pos + BOW_OFFSET.rotate(-self.rot)
-                Arrow(self.game, pos, dir)
+                Arrow(self.game, self.arrow_pos, self.arrow_dir)
                 self.game.arrow_sounds["shoot"].play()
                 #spawn effect where it needs to be
 
