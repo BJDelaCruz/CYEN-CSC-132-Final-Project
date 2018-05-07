@@ -17,6 +17,7 @@ Changes:
 -added a visual animation (the key bobs up and down)
 -added door class
 
+
 Library download codes:
 pip install pygame
 pip install pytmx
@@ -26,13 +27,11 @@ Notes:
 -If Brencen gets his start screen working the way he wants we'll replace the current one
 -I may have figured out the change player image problem, I'll code and test it later today 5/5/2018
 
-Current problems:
--changing images
-
 recent fixes:
--collision with walls
--arrow directional spawning/travling
+-Collision with walls
+-Arrow directional spawning/travling
 -Health now draws properly
+-Images change properly
 
 To Do:
 -create switch class
@@ -40,3 +39,7 @@ To Do:
 -create maps
 -edit mob class to patrol a given route
 -****setup GPIO to work with pygame****
+
+Extras(once we have a finished game AND extra time these are some possibilities):
+-Walking animation
+-More maps
