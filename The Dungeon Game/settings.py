@@ -33,12 +33,18 @@ WALL_IMG = "tileGreen_39.png"
 #play settings
 PLAYER_SPEED = 225
 PLAYER_ROT_SPEED = 250
-PLAYER_IMG = "Player.png"
+PLAYERD_IMG = "downwalk.png"
+PLAYERU_IMG = "upwalk.png"
+PLAYERL_IMG = "leftwalk.png"
+PLAYERR_IMG = "rightwalk.png"
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
 PLAYER_HEALTH = 100
 
 #weapon settings
-ARROW_IMG = "Arrow.png"
+ARROWU_IMG = "Arrowup.png"
+ARROWD_IMG = "Arrowdown.png"
+ARROWL_IMG = "Arrowleft.png"
+ARROWR_IMG = "Arrowright.png"
 ARROW_SPEED = 400
 ARROW_RATE = 600
 ARROW_DAMAGE = 10

@@ -31,7 +31,7 @@ class Player(pg.sprite.Sprite):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.player_img
+        self.image = game.playerr_img
         self.rect = self.image.get_rect()
         self.hit_rect = PLAYER_HIT_RECT
         self.hit_rect.center = (x, y)
@@ -43,6 +43,8 @@ class Player(pg.sprite.Sprite):
         self.last_key = "right"
         self.arrow_dir = vec(0, 1)
         self.arrow_pos = self.pos + vec(30, 0)
+        self.img_change = PLAYERR_IMG
+        self.img = self.game.playerr_img
 
     def get_keys(self):
         self.rot_speed = 0
@@ -51,27 +53,35 @@ class Player(pg.sprite.Sprite):
         if (keys[pg.K_LEFT] or keys[pg.K_a]):
             self.vel = vec(-PLAYER_SPEED, 0)
             self.last_key = "left"
+            self.img = self.game.playerl_img
         if (keys[pg.K_RIGHT] or keys[pg.K_d]):
             self.vel = vec(PLAYER_SPEED, 0)
             self.last_key = "right"
+            self.img = self.game.playerr_img
         if (keys[pg.K_UP] or keys[pg.K_w]):
             self.vel = vec(0, -PLAYER_SPEED)
             self.last_key = "up"
+            self.img = self.game.playeru_img
         if (keys[pg.K_DOWN] or keys[pg.K_s]):
             self.vel = vec(0, PLAYER_SPEED)
             self.last_key = "down"
+            self.img = self.game.playerd_img
         if (self.last_key == "down"):
             self.arrow_dir = vec(0, 1)
             self.arrow_pos = self.pos + vec(0, 30)
+            self.rot = 270
         elif ( self.last_key == "up"):
             self.arrow_dir = vec(0, -1)
             self.arrow_pos = self.pos + vec(0, -30)
+            self.rot = 90
         elif ( self.last_key == "left"):
             self.arrow_dir = vec(-1, 0)
             self.arrow_pos = self.pos + vec(-30, 0)
+            self.rot = 180
         elif ( self.last_key == "right"):
             self.arrow_dir = vec(1, 0)
             self.arrow_pos = self.pos + vec(30, 0)
+            self.rot = 0
         if (keys[pg.K_SPACE]):
             now = pg.time.get_ticks()
             if (now - self.last_shot > ARROW_RATE):
@@ -83,7 +93,7 @@ class Player(pg.sprite.Sprite):
     def update(self):
         self.get_keys()
         self.rot = (self.rot + self.rot_speed * self.game.dt) % 360
-        self.image = pg.transform.rotate(self.game.player_img, self.rot)
+        self.image = self.img
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
         self.pos += self.vel * self.game.dt
@@ -191,11 +201,11 @@ class Arrow(pg.sprite.Sprite):
         self.rect.center = pos
         self.vel = dir * ARROW_SPEED
         self.spawn_time = pg.time.get_ticks()
+        self.image = pg.transform.rotate(self.game.arrow_img, self.game.player.rot)
 
     def update(self):
         self.pos += self.vel * self.game.dt
         self.rect.center = self.pos
-        self.image = pg.transform.rotate(self.game.arrow_img, self.game.player.rot)
         if pg.sprite.spritecollideany(self, self.game.walls):
             self.game.arrow_sounds["hit"].play()
             self.kill()
