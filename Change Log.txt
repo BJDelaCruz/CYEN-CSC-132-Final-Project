@@ -13,8 +13,9 @@ Changes:
 
 -added gameover screen
 -added start screen(temporary unless sufficient)
--add items class (for use with many different images)
+-added items class (for use with many different images)
 -added a visual animation (the key bobs up and down)
+-added door class
 
 Library download codes:
 pip install pygame
@@ -27,12 +28,14 @@ Notes:
 
 Current problems:
 -changing images
--snap player dirrection(press up look up)
--player collision with walls(teleports player to the clossest corner
+
+recent fixes:
+-collision with walls
+-arrow directional spawning/travling
+-Health now draws properly
 
 To Do:
 -create switch class
--create door class
 -create moving platform class
 -create maps
 -edit mob class to patrol a given route
