@@ -48,7 +48,7 @@ ARROWL_IMG = "Arrowleft.png"
 ARROWR_IMG = "Arrowright.png"
 ARROW_SPEED = 400
 ARROW_RATE = 600
-ARROW_DAMAGE = 10
+ARROW_DAMAGE = 40
 
 #Damage setting
 TRAP_DAMAGE = 10
@@ -71,10 +71,10 @@ VE = [all file names in order of display]
 effect_duration = 50
 '''
 # Sounds
-INTRO_MUSIC = "Intro.wav"
-BG_MUSIC = "Dungeon.wav"
+INTRO_MUSIC = ["Intro2.wav", "Intro.wav", "Intro3.wav"]
+BG_MUSIC = ["Dungeon.wav", "Dungeon2.wav", "Dungeon3.wav"]
 ARROW_SOUNDS = {"shoot": "Arrow_Shoot.wav", "hit": "Arrow_Hit.wav"}
-GO_MUSIC = "Game_Over.wav"
+GO_MUSIC = ["Game_Over.wav", "Game_Over2.wav", "Game_Over3.wav"]
 PLAYER_DMG = ["Hurt1.wav", "Hurt2.wav", "Hurt3.wav"]
 ITEM_PICKUP = "Pickup.wav"
 #layers

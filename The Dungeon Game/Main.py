@@ -125,7 +125,7 @@ class Game:
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
         pg.mixer.music.stop()
-        pg.mixer.music.load(path.join(self.music_folder, BG_MUSIC))
+        pg.mixer.music.load(path.join(self.music_folder, BG_MUSIC[randint(0,2)]))
         self.player_pct = 1
 
 #        for row, tiles in enumerate(self.map.data):
@@ -188,9 +188,10 @@ class Game:
             hit.vel = vec(0, 0)
             if (self.player.health <= 0):
                 pg.mixer.music.stop()
-                pg.mixer.music.load(path.join(self.music_folder, GO_MUSIC))
+                pg.mixer.music.load(path.join(self.music_folder, GO_MUSIC[randint(0,2)]))
                 pg.mixer.music.play()
                 self.playing = False
+                self.inv = []
 
 
 
@@ -236,7 +237,7 @@ class Game:
         if (self.paused):
             self.screen.blit(self.dim_screen, (0, 0))
             self.draw_text("Paused", self.title_font, 105, RED, WIDTH / 2, HEIGHT / 2, align="center")
-            self.draw_text("You have:{}".format(self.inv), self.title_font, 30, GREEN, 100, HEIGHT - 50, align="center")
+            self.draw_text("You have: {}".format(self.inv), self.title_font, 30, GREEN, 100, HEIGHT - 50, align="center")
         pg.display.flip()
 
     def events(self):
@@ -254,12 +255,12 @@ class Game:
 
 
     def show_start_screen(self):
-        pg.mixer.music.load(path.join(self.music_folder, INTRO_MUSIC))
+        pg.mixer.music.load(path.join(self.music_folder, INTRO_MUSIC[randint(0,1)]))
         pg.mixer.music.play(loops = -1)
         self.screen.fill(BGCOLOR)
-        self.draw_text(TITLE, self.title_font, 48, RED, WIDTH / 2.5, HEIGHT / 4)
+        self.draw_text(TITLE, self.title_font, 48, RED, WIDTH / 2.9, HEIGHT / 4)
         self.draw_text("Press right hand button to shoot, left hand buttons to move", self.title_font, 22, RED, WIDTH / 6, HEIGHT / 2)
-        self.draw_text("Press a key to play", self.title_font, 22, RED, WIDTH / 2.5, HEIGHT * 3 / 4)
+        self.draw_text("Press a key to play", self.title_font, 22, RED, WIDTH / 2.6, HEIGHT * 3 / 4)
         pg.display.flip()
         self.wait_for_key()
 
