@@ -75,21 +75,20 @@ class Game:
         self.dim_screen = pg.Surface(self.screen.get_size()).convert_alpha()
         self.dim_screen.fill((0, 0, 0, 180))
         self.inv = []
-        self.playerd_img = pg.image.load(path.join(self.img_folder, PLAYERD_IMG)).convert_alpha()
-        self.playeru_img = pg.image.load(path.join(self.img_folder, PLAYERU_IMG)).convert_alpha()
-        self.playerl_img = pg.image.load(path.join(self.img_folder, PLAYERL_IMG)).convert_alpha()
-        self.playerr_img = pg.image.load(path.join(self.img_folder, PLAYERR_IMG)).convert_alpha()
-        self.playerd_img = pg.transform.scale(self.playerd_img, (TILESIZE + 8, TILESIZE + 8))
-        self.playeru_img = pg.transform.scale(self.playeru_img, (TILESIZE + 8, TILESIZE + 8))
-        self.playerl_img = pg.transform.scale(self.playerl_img, (TILESIZE + 8, TILESIZE + 8))
-        self.playerr_img = pg.transform.scale(self.playerr_img, (TILESIZE + 8, TILESIZE + 8))
+        self.playerd_img = [pg.image.load(path.join(self.img_folder, item)).convert_alpha() for item in PLAYERD_IMG]
+        self.playeru_img = [pg.image.load(path.join(self.img_folder, item)).convert_alpha() for item in PLAYERU_IMG]
+        self.playerl_img = [pg.image.load(path.join(self.img_folder, item)).convert_alpha() for item in PLAYERL_IMG]
+        self.playerr_img = [pg.image.load(path.join(self.img_folder, item)).convert_alpha() for item in PLAYERR_IMG]
+        self.playerd_img = [pg.transform.scale(item, (TILESIZE, TILESIZE)) for item in self.playerd_img]
+        self.playeru_img = [pg.transform.scale(item, (TILESIZE, TILESIZE)) for item in self.playeru_img]
+        self.playerl_img = [pg.transform.scale(item, (TILESIZE, TILESIZE)) for item in self.playerl_img]
+        self.playerr_img = [pg.transform.scale(item, (TILESIZE, TILESIZE)) for item in self.playerr_img]
         self.mob_img = pg.image.load(path.join(self.img_folder, MOB_IMG)).convert_alpha()
         self.mob_img = pg.transform.scale(self.mob_img, (TILESIZE, TILESIZE))
         self.arrow_img = pg.image.load(path.join(self.img_folder, ARROWR_IMG)).convert_alpha()
         self.arrow_img = pg.transform.scale(self.arrow_img, (TILESIZE, TILESIZE))
         self.door_img = pg.image.load(path.join(self.img_folder, DOOR_IMG)).convert_alpha()
         self.door_img = pg.transform.scale(self.door_img, (TILESIZE, TILESIZE))
-        self.player_pct = 1
         self.item_images = {}
         for item in ITEM_IMAGES:
             self.item_images[item] = pg.image.load(path.join(self.img_folder, ITEM_IMAGES[item])).convert_alpha()
@@ -127,6 +126,7 @@ class Game:
         self.map_rect = self.map_img.get_rect()
         pg.mixer.music.stop()
         pg.mixer.music.load(path.join(self.music_folder, BG_MUSIC))
+        self.player_pct = 1
 
 #        for row, tiles in enumerate(self.map.data):
 #            for col, tile in enumerate(tiles):
@@ -177,7 +177,7 @@ class Game:
         for hit in hits:
             self.pickup.play()
             hit.kill()
-            self.inv.append(hit.type)
+            self.inv.append("{}".format(hit.type))
         # mobs hit player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
@@ -191,6 +191,7 @@ class Game:
                 pg.mixer.music.load(path.join(self.music_folder, GO_MUSIC))
                 pg.mixer.music.play()
                 self.playing = False
+
 
 
         if (hits):
@@ -219,7 +220,10 @@ class Game:
         for sprite in self.all_sprites:
             if (isinstance(sprite, Mob)):
                 sprite.draw_health()
-            self.screen.blit(sprite.image, self.camera.apply(sprite))
+            if (isinstance(sprite, Player)):
+                self.screen.blit(sprite.image, self.camera.apply(sprite))
+            else:
+                self.screen.blit(sprite.image, self.camera.apply(sprite))
             if (self.draw_debug):
                 pg.draw.rect(self.screen, RED, self.camera.apply_rect(sprite.hit_rect), 1)
         if (self.draw_debug):
@@ -232,6 +236,7 @@ class Game:
         if (self.paused):
             self.screen.blit(self.dim_screen, (0, 0))
             self.draw_text("Paused", self.title_font, 105, RED, WIDTH / 2, HEIGHT / 2, align="center")
+            self.draw_text("You have:{}".format(self.inv), self.title_font, 30, GREEN, 100, HEIGHT - 50, align="center")
         pg.display.flip()
 
     def events(self):

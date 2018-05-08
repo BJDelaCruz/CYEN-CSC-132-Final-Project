@@ -33,10 +33,11 @@ WALL_IMG = "tileGreen_39.png"
 #play settings
 PLAYER_SPEED = 225
 PLAYER_ROT_SPEED = 250
-PLAYERD_IMG = "downwalk.png"
-PLAYERU_IMG = "upwalk.png"
-PLAYERL_IMG = "leftwalk.png"
-PLAYERR_IMG = "rightwalk.png"
+PLAYERD_IMG = ["downwalk.png", "downwalk1.png", "downwalk2.png", "downwalk3.png"]
+PLAYERU_IMG = ["upwalk.png", "upwalk1.png", "upwalk2.png", "upwalk3.png", ]
+PLAYERL_IMG = ["leftwalk.png", "leftwalk1.png", "leftwalk2.png", "leftwalk3.png"]
+PLAYERR_IMG = ["rightwalk.png", "rightwalk1.png", "rightwalk2.png", "rightwalk3.png", ]
+PLAYER_RECT_IMG = "downwalk.png"
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
 PLAYER_HEALTH = 100
 

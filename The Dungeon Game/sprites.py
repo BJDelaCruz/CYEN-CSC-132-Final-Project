@@ -31,8 +31,10 @@ class Player(pg.sprite.Sprite):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.playerr_img
-        self.rect = self.image.get_rect()
+        self.img_num = 0
+        self.image = game.playerr_img[self.img_num]
+        self.img = self.game.playerr_img[self.img_num]
+        self.rect = pg.Rect(0, 0, 35, 35)
         self.hit_rect = PLAYER_HIT_RECT
         self.hit_rect.center = (x, y)
         self.vel = vec(0, 0)
@@ -43,8 +45,8 @@ class Player(pg.sprite.Sprite):
         self.last_key = "right"
         self.arrow_dir = vec(0, 1)
         self.arrow_pos = self.pos + vec(30, 0)
-        self.img_change = PLAYERR_IMG
-        self.img = self.game.playerr_img
+        self.ani_speed = 0
+
 
     def get_keys(self):
         self.rot_speed = 0
@@ -53,19 +55,63 @@ class Player(pg.sprite.Sprite):
         if (keys[pg.K_LEFT] or keys[pg.K_a]):
             self.vel = vec(-PLAYER_SPEED, 0)
             self.last_key = "left"
-            self.img = self.game.playerl_img
+            if (self.img_num < len(PLAYERD_IMG)):
+                if (self.ani_speed < 8):
+                    self.img = self.game.playerl_img[self.img_num]
+                    self.ani_speed += 1
+                else:
+                    self.img = self.game.playerl_img[self.img_num]
+                    self.ani_speed = 0
+                    self.img_num += 1
+            else:
+                self.img_num = 0
+                self.img = self.game.playerl_img[self.img_num]
+
         if (keys[pg.K_RIGHT] or keys[pg.K_d]):
             self.vel = vec(PLAYER_SPEED, 0)
             self.last_key = "right"
-            self.img = self.game.playerr_img
+            if (self.img_num < len(PLAYERR_IMG)):
+                if (self.ani_speed < 8):
+                    self.img = self.game.playerr_img[self.img_num]
+                    self.ani_speed += 1
+                else:
+                    self.img = self.game.playerr_img[self.img_num]
+                    self.ani_speed = 0
+                    self.img_num += 1
+            else:
+                self.img_num = 0
+                self.img = self.game.playerr_img[self.img_num]
+
         if (keys[pg.K_UP] or keys[pg.K_w]):
             self.vel = vec(0, -PLAYER_SPEED)
             self.last_key = "up"
-            self.img = self.game.playeru_img
+            if (self.img_num < len(PLAYERU_IMG)):
+                if (self.ani_speed < 8):
+                    self.img = self.game.playeru_img[self.img_num]
+                    self.ani_speed += 1
+                else:
+                    self.img = self.game.playeru_img[self.img_num]
+                    self.ani_speed = 0
+                    self.img_num += 1
+            else:
+                self.img_num = 0
+                self.img = self.game.playeru_img[self.img_num]
+
         if (keys[pg.K_DOWN] or keys[pg.K_s]):
             self.vel = vec(0, PLAYER_SPEED)
             self.last_key = "down"
-            self.img = self.game.playerd_img
+            if (self.img_num < len(PLAYERD_IMG)):
+                if (self.ani_speed < 8):
+                    self.img = self.game.playerd_img[self.img_num]
+                    self.ani_speed += 1
+                else:
+                    self.img = self.game.playerd_img[self.img_num]
+                    self.ani_speed = 0
+                    self.img_num += 1
+            else:
+                self.img_num = 0
+                self.img = self.game.playerd_img[self.img_num]
+
         if (self.last_key == "down"):
             self.arrow_dir = vec(0, 1)
             self.arrow_pos = self.pos + vec(0, 30)
@@ -94,7 +140,6 @@ class Player(pg.sprite.Sprite):
         self.get_keys()
         self.rot = (self.rot + self.rot_speed * self.game.dt) % 360
         self.image = self.img
-        self.rect = self.image.get_rect()
         self.rect.center = self.pos
         self.pos += self.vel * self.game.dt
         self.hit_rect.centerx = self.pos.x
@@ -148,7 +193,6 @@ class Mob(pg.sprite.Sprite):
             collide_with_walls(self, self.game.walls, 'y')
             self.rect.center = self.hit_rect.center
         if self.health <= 0:
-            choice(self.game.zombie_hit_sounds).play()
             self.kill()
 
     def draw_health(self):
