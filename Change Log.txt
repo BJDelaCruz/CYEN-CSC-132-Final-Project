@@ -16,6 +16,7 @@ Changes:
 -added items class (for use with many different images)
 -added a visual animation (the key bobs up and down)
 -added door class
+-added walking animation
 
 
 Library download codes:
@@ -41,5 +42,4 @@ To Do:
 -****setup GPIO to work with pygame****
 
 Extras(once we have a finished game AND extra time these are some possibilities):
--Walking animation
 -More maps
