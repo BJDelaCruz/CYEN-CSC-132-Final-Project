@@ -31,7 +31,7 @@ GRIDHEIGHT = HEIGHT / TILESIZE
 WALL_IMG = "tileGreen_39.png"
 
 #player settings
-PLAYER_SPEED = 200
+PLAYER_SPEED = 250
 PLAYER_ROT_SPEED = 250
 PLAYERD_IMG = ["downwalk.png", "downwalk1.png", "downwalk2.png", "downwalk3.png"]
 PLAYERU_IMG = ["upwalk.png", "upwalk1.png", "upwalk2.png", "upwalk3.png", ]

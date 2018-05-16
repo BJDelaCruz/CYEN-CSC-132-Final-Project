@@ -211,7 +211,6 @@ class Game:
             self.pickup.play()
             hit.kill()
             self.inv.append("{}".format(hit.type))
-            print self.inv
             # Collisions between Player and Mobs
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:

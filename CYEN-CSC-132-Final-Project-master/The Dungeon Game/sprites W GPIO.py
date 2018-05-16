@@ -6,7 +6,6 @@ from settings import *
 from tilemap import collide_hit_rect
 import pytweening as tween
 vec = pg.math.Vector2
-
 #GPIO SETUP
 gpio.setmode(gpio.BCM)
 gpio.setup(PLAYER_CONTROLS, gpio.IN, pull_up_down = GPIO.PUD_DOWN)
@@ -59,6 +58,7 @@ class Player(pg.sprite.Sprite):
         self.vel = vec(0, 0)
         keys = pg.key.get_pressed()
         if (keys[pg.K_LEFT] or keys[pg.K_a] or gpio.input(PLAYER_CONTROLS[2])):
+
             self.vel = vec(-PLAYER_SPEED, 0)
             self.last_key = "left"
             if (self.img_num < len(PLAYERD_IMG)):
