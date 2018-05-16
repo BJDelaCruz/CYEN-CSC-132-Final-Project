@@ -217,8 +217,8 @@ class Squirrel(pg.sprite.Sprite):
         self.rect.center = self.pos
         self.rot = 0
         self.health = MOB_HEALTH
-        self.speed = choice(MOB_SPEEDS)
-        self.target = game.player
+        
+        
 
     def avoid_mobs(self):
         for mob in self.game.mobs:
@@ -291,7 +291,6 @@ class Door(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self._layer = WALL_LAYER
         self.game = game
-        self.image = game.door_img
         self.rect = pg.Rect(x, y, w, h)
         self.x = x
         self.y = y
