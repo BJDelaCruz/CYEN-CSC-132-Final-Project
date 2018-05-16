@@ -63,6 +63,8 @@ DMG_KNOCKBACK = 20
 
 #mob settings
 MOB_IMG = "robot1_hold.png"
+SQU_IMG = "squirrel.png"
+SQU_DMG = 100
 MOB_SPEED = 150
 MOB_HIT_RECT = pg.Rect(0, 0, 35, 35)
 MOB_HEALTH = 100

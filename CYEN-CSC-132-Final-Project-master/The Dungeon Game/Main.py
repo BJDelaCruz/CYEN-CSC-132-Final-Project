@@ -91,6 +91,8 @@ class Game:
         #Mob Images
         self.mob_img = pg.image.load(path.join(self.img_folder, MOB_IMG)).convert_alpha()
         self.mob_img = pg.transform.scale(self.mob_img, (TILESIZE, TILESIZE))
+        self.squ_img = pg.image.load(path.join(self.img_folder, SQU_IMG)).convert_alpha()
+        self.squ_img = pg.transform.scale(self.squ_img, (TILESIZE * 3, TILESIZE * 2))
         #Projectile Images
         self.arrow_img = pg.image.load(path.join(self.img_folder, ARROWR_IMG)).convert_alpha()
         self.arrow_img = pg.transform.scale(self.arrow_img, (TILESIZE, TILESIZE))

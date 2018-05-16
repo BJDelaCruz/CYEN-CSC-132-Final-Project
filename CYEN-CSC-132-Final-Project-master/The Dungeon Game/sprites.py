@@ -206,7 +206,7 @@ class Squirrel(pg.sprite.Sprite):
         self.groups = game.all_sprites, game.mobs
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.mob_img.copy()
+        self.image = game.squ_img
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.hit_rect = MOB_HIT_RECT.copy()
@@ -220,21 +220,10 @@ class Squirrel(pg.sprite.Sprite):
         self.speed = choice(MOB_SPEEDS)
         self.target = game.player
 
-    def avoid_mobs(self):
-        for mob in self.game.mobs:
-            if mob != self:
-                dist = self.pos - mob.pos
-                if 0 < dist.length() < AVOID_RADIUS:
-                    self.acc += dist.normalize()
-
     def update(self):
-        self.hit_rect.centerx = self.pos.x
-        collide_with_walls(self, self.game.walls, 'x')
-        self.hit_rect.centery = self.pos.y
-        collide_with_walls(self, self.game.walls, 'y')
-        self.rect.center = self.hit_rect.center
         if self.health <= 0:
             self.kill()
+            self.game.inv["acorn"].remove
 
 class Wall(pg.sprite.Sprite):
     def __init__(self, game, x, y):
