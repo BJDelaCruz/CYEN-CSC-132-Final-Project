@@ -203,13 +203,13 @@ class Mob(pg.sprite.Sprite):
 class Squirrel(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self._layer = MOB_LAYER
-        self.groups = game.all_sprites, game.mobs
+        self.groups = game.all_sprites, game.squirrels
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.squ_img
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.hit_rect = MOB_HIT_RECT.copy()
+        self.hit_rect = self.rect
         self.hit_rect.center = self.rect.center
         self.pos = vec(x, y)
         self.vel = vec(0, 0)
@@ -221,9 +221,12 @@ class Squirrel(pg.sprite.Sprite):
         self.target = game.player
 
     def update(self):
+        if pg.sprite.spritecollideany(self, self.game.arrows):
+            self.health = 0
         if self.health <= 0:
             self.kill()
-            self.game.inv["acorn"].remove
+            self.game.inv.remove('acorn')
+            
 
 class Wall(pg.sprite.Sprite):
     def __init__(self, game, x, y):

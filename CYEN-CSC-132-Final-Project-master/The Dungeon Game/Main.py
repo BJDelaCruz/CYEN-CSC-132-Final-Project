@@ -126,6 +126,7 @@ class Game:
         self.items = pg.sprite.Group()
         self.doors = pg.sprite.Group()
         self.arrows = pg.sprite.Group()
+        self.squirrels = pg.sprite.Group()
 
         # Sets the Map
         self.map = TiledMap(path.join(self.map_folder, self.mapFile))
@@ -147,7 +148,6 @@ class Game:
 
             if (tile_object.name == "player" and self.counter == 1):
                 self.player = Player(self, obj_center.x, obj_center.y)
-                print "Player Created"
                 self.counter += 1
 
             if tile_object.name == 'mob':
@@ -176,6 +176,7 @@ class Game:
 
             if (tile_object.name == "phone"):
                 Item(self, obj_center, tile_object.name)
+                
             if (tile_object.name == "squirrel"):
                 Squirrel(self, tile_object.x, tile_object.y)
 
@@ -210,6 +211,7 @@ class Game:
             self.pickup.play()
             hit.kill()
             self.inv.append("{}".format(hit.type))
+            print self.inv
             # Collisions between Player and Mobs
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
@@ -229,7 +231,11 @@ class Game:
                 self.endOrStart = True
         if (hits):
             self.player.pos += vec(DMG_KNOCKBACK, 0).rotate(-hits[0].rot)
+        hits = pg.sprite.spritecollide(self.player, self.squirrels, False, collide_hit_rect)
+        for hit in hits:
+            self.player.pos[0] -= 20
 
+            
         if(self.lvl2Time == True):
             self.mapFile = 'FinalMapTest2.tmx'
             self.all_sprites.empty()

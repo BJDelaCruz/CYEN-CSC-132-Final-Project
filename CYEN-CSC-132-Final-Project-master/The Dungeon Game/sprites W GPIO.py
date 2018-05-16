@@ -1,3 +1,4 @@
+import RPi.GPIO as gpio
 import pygame as pg
 import math
 from random import uniform, choice, randint
@@ -87,7 +88,7 @@ class Player(pg.sprite.Sprite):
                 self.img_num = 0
                 self.img = self.game.playerr_img[self.img_num]
 
-        if (keys[pg.K_UP] or keys[pg.K_w] or gpio.input(PLAYER_CONTROLS[0])):):
+        if (keys[pg.K_UP] or keys[pg.K_w] or gpio.input(PLAYER_CONTROLS[0])):
             self.vel = vec(0, -PLAYER_SPEED)
             self.last_key = "up"
             if (self.img_num < len(PLAYERU_IMG)):
@@ -207,13 +208,13 @@ class Mob(pg.sprite.Sprite):
 class Squirrel(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self._layer = MOB_LAYER
-        self.groups = game.all_sprites, game.mobs
+        self.groups = game.all_sprites, game.squirrels
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.mob_img.copy()
+        self.image = game.squ_img
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.hit_rect = MOB_HIT_RECT.copy()
+        self.hit_rect = self.rect
         self.hit_rect.center = self.rect.center
         self.pos = vec(x, y)
         self.vel = vec(0, 0)
@@ -224,21 +225,13 @@ class Squirrel(pg.sprite.Sprite):
         self.speed = choice(MOB_SPEEDS)
         self.target = game.player
 
-    def avoid_mobs(self):
-        for mob in self.game.mobs:
-            if mob != self:
-                dist = self.pos - mob.pos
-                if 0 < dist.length() < AVOID_RADIUS:
-                    self.acc += dist.normalize()
-
     def update(self):
-        self.hit_rect.centerx = self.pos.x
-        collide_with_walls(self, self.game.walls, 'x')
-        self.hit_rect.centery = self.pos.y
-        collide_with_walls(self, self.game.walls, 'y')
-        self.rect.center = self.hit_rect.center
+        if pg.sprite.spritecollideany(self, self.game.arrows):
+            self.health = 0
         if self.health <= 0:
             self.kill()
+            self.game.inv.remove('acorn')
+            
 
 class Wall(pg.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -315,13 +308,12 @@ class Door(pg.sprite.Sprite):
                 hits = pg.sprite.spritecollide(self.game.player, self.game.doors, False, collide_hit_rect)
                 if hits:
                     self.game.lvl3Time = True
-                    
+
         for i in range(len(self.game.inv)):
             if(self.game.inv[i] == "phone"):
-                hits = pg.sprite.sprite.spritecollide(self.game.player, self.game.doors, False, collide_hit_rect)
+                hits = pg.sprite.spritecollide(self.game.player, self.game.doors, False, collide_hit_rect)
                 if hits:
-                    self.endingTime == True
-        
+                    self.game.endingTime = True
 
 class Arrow(pg.sprite.Sprite):
     def __init__(self, game, pos, dir):
