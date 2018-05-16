@@ -130,6 +130,7 @@ class Game:
         # Loads Music
         pg.mixer.music.stop()
         pg.mixer.music.load(path.join(self.music_folder, BG_MUSIC[randint(0,2)]))
+        pg.mixer.music.set_volume(0.2)
         pg.mixer.music.play(loops = -1)
 
         self.player_pct = 1
@@ -210,6 +211,7 @@ class Game:
             if (self.player.health <= 0):
                 pg.mixer.music.stop()
                 pg.mixer.music.load(path.join(self.music_folder, GO_MUSIC[randint(0,2)]))
+                pg.mixer.music.set_volume(0.2)
                 pg.mixer.music.play()
                 self.playing = False
                 self.inv = []
@@ -283,6 +285,7 @@ class Game:
 
     def show_start_screen(self):
         pg.mixer.music.load(path.join(self.music_folder, INTRO_MUSIC[randint(0,1)]))
+        pg.mixer.music.set_volume(0.2)
         pg.mixer.music.play(loops = 1)
         self.screen.fill(BGCOLOR)
         self.draw_text(TITLE, self.title_font, 48, RED, WIDTH / 2.9, HEIGHT / 4)
@@ -294,6 +297,7 @@ class Game:
 
     def start_cs(self):
         pg.mixer.music.load(path.join(self.music_folder, ALARM))
+        pg.mixer.music.set_volume(0.2)
         pg.mixer.music.play(loops = 1)
         self.screen.fill(BGCOLOR)
         self.draw_text("Huh?", self.title_font, 48, RED, WIDTH / 2.3, HEIGHT / 5.5)
@@ -304,8 +308,6 @@ class Game:
         self.wait_for_key()
 
     def start_es(self):
-        pg.mixer.music.load(path.join(self.music_folder, ALARM))
-        pg.mixer.music.play(loops = 1)
         self.screen.fill(BGCOLOR)
         self.draw_text("Um...", self.title_font, 48, RED, WIDTH / 2.3, HEIGHT / 5.5)
         self.draw_text("Where is everyone?", self.title_font, 22, RED, WIDTH / 2.5, HEIGHT / 3)
