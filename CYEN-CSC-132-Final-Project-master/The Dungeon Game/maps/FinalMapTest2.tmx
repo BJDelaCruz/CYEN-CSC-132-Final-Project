@@ -87,6 +87,7 @@
   <object id="12" name="wall" x="448" y="928" width="1472" height="32"/>
   <object id="13" name="wall" x="792" y="0" width="48" height="24"/>
   <object id="14" name="exit" x="5088" y="128" width="32" height="192"/>
+  <object id="16" name="squirrel" x="5050" y="192" width="32" height="192"/>
   <object id="15" name="laptop" x="1856" y="864" width="32" height="32"/>
  </objectgroup>
 </map>
