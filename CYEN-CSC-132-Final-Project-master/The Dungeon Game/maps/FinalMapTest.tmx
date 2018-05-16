@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="160" height="30" tilewidth="32" tileheight="32" infinite="0" nextobjectid="200">
+<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="160" height="30" tilewidth="32" tileheight="32" infinite="0" nextobjectid="202">
  <tileset firstgid="1" source="Inside_A2.tsx"/>
  <tileset firstgid="193" source="Inside_C.tsx"/>
  <tileset firstgid="449" source="Outside_A2.tsx"/>
@@ -203,5 +203,6 @@
   <object id="194" name="acorn" x="2656" y="640" width="32" height="32"/>
   <object id="195" name="backpack" x="96" y="416" width="32" height="32"/>
   <object id="196" name="wall" x="5088" y="256" width="32" height="272"/>
+  <object id="200" name="squirrel" x="5056" y="576" width="32" height="32"/>
  </objectgroup>
 </map>
