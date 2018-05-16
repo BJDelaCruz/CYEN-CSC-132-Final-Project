@@ -6,6 +6,10 @@ from tilemap import collide_hit_rect
 import pytweening as tween
 vec = pg.math.Vector2
 
+#GPIO SETUP
+gpio.setmode(gpio.BCM)
+gpio.setup(PLAYER_CONTROLS, gpio.IN, pull_up_down = GPIO.PUD_DOWN)
+
 def collide_with_walls(sprite, group, dir, secondaryGroup = None):
     if dir == 'x':
             hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
@@ -53,7 +57,7 @@ class Player(pg.sprite.Sprite):
         self.rot_speed = 0
         self.vel = vec(0, 0)
         keys = pg.key.get_pressed()
-        if (keys[pg.K_LEFT] or keys[pg.K_a]):
+        if (keys[pg.K_LEFT] or keys[pg.K_a] or gpio.input(PLAYER_CONTROLS[2])):
             self.vel = vec(-PLAYER_SPEED, 0)
             self.last_key = "left"
             if (self.img_num < len(PLAYERD_IMG)):
@@ -68,7 +72,7 @@ class Player(pg.sprite.Sprite):
                 self.img_num = 0
                 self.img = self.game.playerl_img[self.img_num]
 
-        if (keys[pg.K_RIGHT] or keys[pg.K_d]):
+        if (keys[pg.K_RIGHT] or keys[pg.K_d] or gpio.input(PLAYER_CONTROLS[3])):
             self.vel = vec(PLAYER_SPEED, 0)
             self.last_key = "right"
             if (self.img_num < len(PLAYERR_IMG)):
@@ -83,7 +87,7 @@ class Player(pg.sprite.Sprite):
                 self.img_num = 0
                 self.img = self.game.playerr_img[self.img_num]
 
-        if (keys[pg.K_UP] or keys[pg.K_w]):
+        if (keys[pg.K_UP] or keys[pg.K_w] or gpio.input(PLAYER_CONTROLS[0])):):
             self.vel = vec(0, -PLAYER_SPEED)
             self.last_key = "up"
             if (self.img_num < len(PLAYERU_IMG)):
@@ -98,7 +102,7 @@ class Player(pg.sprite.Sprite):
                 self.img_num = 0
                 self.img = self.game.playeru_img[self.img_num]
 
-        if (keys[pg.K_DOWN] or keys[pg.K_s]):
+        if (keys[pg.K_DOWN] or keys[pg.K_s]  or gpio.input(PLAYER_CONTROLS[1])):
             self.vel = vec(0, PLAYER_SPEED)
             self.last_key = "down"
             if (self.img_num < len(PLAYERD_IMG)):
@@ -129,7 +133,7 @@ class Player(pg.sprite.Sprite):
             self.arrow_dir = vec(1, 0)
             self.arrow_pos = self.pos + vec(30, 0)
             self.rot = 0
-        if (keys[pg.K_SPACE]):
+        if (keys[pg.K_SPACE] or gpio.input(PLAYER_CONTROLS[4])):
             for i in range(len(self.game.inv)):
                 if(self.game.inv[i] == 'acorn'):
                     now = pg.time.get_ticks()

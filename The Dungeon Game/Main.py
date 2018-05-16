@@ -35,6 +35,7 @@ class Game:
         self.lvl2Time = False
         self.lvl3Time = False
         self.lvl2loaded = False
+        self.lvl3loaded = False
 
     def draw_text(self, text, font_name, size, color, x, y, align = "nw"):#align is what corner of the rect you want at the given cords
         font = pg.font.Font(font_name, size)
@@ -168,6 +169,11 @@ class Game:
 
             if (tile_object.name == "laptop"):
                 Item(self, obj_center, tile_object.name)
+                
+            if (tile_object.name == "phone"):
+                Item(self, obj_center, tile_object.name)
+            if (tile_object.name == "squirrel"):
+                Squirrel(self, tile_object.x, tile_object.y)
 
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
@@ -238,6 +244,18 @@ class Game:
             self.player.kill()
             self.lvl3Time = False
             self.new()
+        
+        if(self.endingTime == True):
+            self.lvl3loaded = True
+            self.endingTime = False
+            self.all_sprites.empty()
+            self.walls.empty()
+            self.mobs.empty()
+            self.doors.empty()
+            self.player.kill()
+            self.start_es()
+            
+            
 
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):

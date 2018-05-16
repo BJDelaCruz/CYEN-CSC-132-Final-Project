@@ -30,8 +30,8 @@ GRIDHEIGHT = HEIGHT / TILESIZE
 
 WALL_IMG = "tileGreen_39.png"
 
-#play settings
-PLAYER_SPEED = 400
+#player settings
+PLAYER_SPEED = 175
 PLAYER_ROT_SPEED = 250
 PLAYERD_IMG = ["downwalk.png", "downwalk1.png", "downwalk2.png", "downwalk3.png"]
 PLAYERU_IMG = ["upwalk.png", "upwalk1.png", "upwalk2.png", "upwalk3.png", ]
@@ -40,6 +40,7 @@ PLAYERR_IMG = ["rightwalk.png", "rightwalk1.png", "rightwalk2.png", "rightwalk3.
 PLAYER_RECT_IMG = "downwalk.png"
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
 PLAYER_HEALTH = 100
+PLAYER_CONTROLS = [25, 26, 23, 22, 24] # UP DOWN LEFT RIGHT SPACE
 
 #weapon settings
 ARROWU_IMG = "Arrowup.png"
